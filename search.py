@@ -63,6 +63,12 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
+    """
+    there are two type of searchs:
+    1-with cost search
+    2-without cost search
+    for both of searchs we have a fringe so we can store next states we want to explore
+    """
 
 
 
@@ -90,18 +96,17 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-
-    util.raiseNotDefined()
+    return NoCostSearch(problem, frontier=util.Stack())
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return NoCostSearch(problem, frontier=util.Queue())
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return searchWithCost(problem)
 
 def nullHeuristic(state, problem=None) -> float:
     """
@@ -114,6 +119,52 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directi
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
+def searchWithCost(problem, heureistic=nullHeuristic):
+    frontier= util.PriorityQueue()
+    closed_set= list()
+    s= (problem.getStartState(), [])
+    frontier.push(s, 0)
+    while not frontier.isEmpty():
+        curr= frontier.pop()
+        if problem.isGoalState(curr[0]):
+            return curr[1]
+        if curr[0] not in closed_set:
+            closed_set.append(curr[0])
+            curr_child= problem.getSuccessors(curr[0])
+            for state in curr_child:
+                if state[0] not in closed_set:
+                    path= curr[1] + [state[1]]
+                    if heureistic == nullHeuristic:
+                        frontier.push((state[0], curr[1]+ [state[1]]), problem.getCostOfActions(path))
+                    else:
+                        tmp= problem.getCostOfActions(path)+ heureistic(state[0], problem)
+                        frontier.push((state[0], curr[1]+ [state[1]]), tmp)
+
+    return None 
+
+def NoCostSearch(problem, frontier):
+    """
+    for NoCostSearch we search over graph from start state and add it's neighbours to the fringe for next explorations.
+    in this type of search we need only states first and second member cordinations and paths
+    this kind of search will only be used in BFS and DFS but the only diff is for BFS we should use a Queue for frontier 
+    and for DFS we should use Stack.
+    """
+    closed_set= list()
+    s= (problem.getStartState(), [])
+    frontier.push(s)
+    while not frontier.isEmpty():
+        curr= frontier.pop()
+        if problem.isGoalState(curr[0]):
+            return curr[1]
+        if curr[0] not in closed_set:
+            closed_set.append(curr[0])
+            curr_child= problem.getSuccessors(curr[0])
+            for state in curr_child:
+                if state[0] not in closed_set:
+                    frontier.push((state[0], curr[1]+ [state[1]]))
+    return None 
+
 
 # Abbreviations
 bfs = breadthFirstSearch
