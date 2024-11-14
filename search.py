@@ -118,7 +118,7 @@ def nullHeuristic(state, problem=None) -> float:
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return searchWithCost(problem, heuristic)
 
 def searchWithCost(problem, heureistic=nullHeuristic):
     frontier= util.PriorityQueue()
